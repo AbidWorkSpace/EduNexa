@@ -1,0 +1,61 @@
+/**
+ * Print-only styles for invoice.
+ * Layout structure and labels come from invoice-layout-descriptor.js; this file only controls
+ * @media print and #invoice-print-root size/padding/font for 80mm/58mm.
+ * Import this in the component or layout that mounts the invoice print root.
+ */
+
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #invoice-print-root,
+  #invoice-print-root * {
+    visibility: visible;
+  }
+
+  #invoice-print-root {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 72mm;
+    max-width: 72mm;
+    margin: 0;
+    padding: 8px;
+    font-size: 12px;
+    font-family: monospace;
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    overflow: visible;
+    box-shadow: none;
+    box-sizing: border-box;
+    text-align: left;
+  }
+
+  #invoice-print-root * {
+    box-sizing: border-box;
+    color: inherit !important;
+    background: transparent !important;
+  }
+
+  #invoice-print-root.invoice-print-58mm {
+    width: 52mm;
+    max-width: 52mm;
+    padding: 6px;
+    font-size: 11px;
+  }
+
+  /* Avoid page-breaking inside item rows and totals */
+  #invoice-print-root [data-print-no-break] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

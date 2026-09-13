@@ -1,0 +1,29 @@
+[
+  {
+    "userId": "gla-demo-user",
+    "email": "demo@minimals.cc",
+    "password": "password",
+    "userName": "GLA Demo User",
+    "roles": ["admin"],
+    "permissions": ["gla:read", "gla:write", "gla:review"],
+    "schoolId": "sch_abc"
+  },
+  {
+    "userId": "usr_abc_admin",
+    "email": "admin@abcschool.edu",
+    "password": "password",
+    "userName": "ABC School Admin",
+    "roles": ["school_admin"],
+    "permissions": ["school:read", "school:update"],
+    "schoolId": "sch_abc"
+  },
+  {
+    "userId": "usr_gv_admin",
+    "email": "admin@greenvalley.edu",
+    "password": "password",
+    "userName": "Green Valley Admin",
+    "roles": ["school_admin"],
+    "permissions": ["school:read", "school:update"],
+    "schoolId": "sch_greenvalley"
+  }
+]

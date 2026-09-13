@@ -1,0 +1,24 @@
+{
+  "name": "Minimal Dashboard",
+  "short_name": "Dashboard",
+  "description": "Next.js dashboard theme with MUI.",
+  "start_url": "/dashboard/overview",
+  "display": "standalone",
+  "background_color": "#141A21",
+  "theme_color": "#078DEE",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo/house-logo.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo/house-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

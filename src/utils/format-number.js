@@ -1,0 +1,127 @@
+import { formatNumberLocale } from 'src/locales';
+
+const DEFAULT_LOCALE = { code: 'en-PK', currency: 'PKR' };
+
+// ----------------------------------------------------------------------
+
+/**
+ * Returns the currency symbol for the current number-format locale (e.g. "Rs", "$").
+ * Use for input adornments and labels; for full formatted amounts use fCurrency.
+ */
+export function getCurrencySymbol() {
+  const locale = formatNumberLocale() || DEFAULT_LOCALE;
+  const formatter = new Intl.NumberFormat(locale.code, {
+    style: 'currency',
+    currency: locale.currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+  const parts = formatter.formatToParts(0);
+  const currencyPart = parts.find((p) => p.type === 'currency');
+  return currencyPart ? currencyPart.value : locale.currency;
+}
+
+function processInput(inputValue) {
+  if (inputValue == null || Number.isNaN(inputValue)) return null;
+  return Number(inputValue);
+}
+
+// ----------------------------------------------------------------------
+
+/**
+ * Round a monetary amount to 2 decimal places (half-up).
+ * @param {number|string|null|undefined} value
+ * @returns {number}
+ */
+export function roundMoney(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 0;
+  return Math.round(n * 100) / 100;
+}
+
+// ----------------------------------------------------------------------
+
+export function fNumber(inputValue, options) {
+  const locale = formatNumberLocale() || DEFAULT_LOCALE;
+
+  const number = processInput(inputValue);
+  if (number === null) return '';
+
+  const fm = new Intl.NumberFormat(locale.code, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+    ...options,
+  }).format(number);
+
+  return fm;
+}
+
+// ----------------------------------------------------------------------
+
+export function fCurrency(inputValue, options) {
+  const locale = formatNumberLocale() || DEFAULT_LOCALE;
+
+  const number = processInput(inputValue);
+  if (number === null) return '';
+
+  const fm = new Intl.NumberFormat(locale.code, {
+    style: 'currency',
+    currency: locale.currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+    ...options,
+  }).format(number);
+
+  return fm;
+}
+
+// ----------------------------------------------------------------------
+
+export function fPercent(inputValue, options) {
+  const locale = formatNumberLocale() || DEFAULT_LOCALE;
+
+  const number = processInput(inputValue);
+  if (number === null) return '';
+
+  const fm = new Intl.NumberFormat(locale.code, {
+    style: 'percent',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 1,
+    ...options,
+  }).format(number / 100);
+
+  return fm;
+}
+
+// ----------------------------------------------------------------------
+
+export function fShortenNumber(inputValue, options) {
+  const locale = formatNumberLocale() || DEFAULT_LOCALE;
+
+  const number = processInput(inputValue);
+  if (number === null) return '';
+
+  const fm = new Intl.NumberFormat(locale.code, {
+    notation: 'compact',
+    maximumFractionDigits: 2,
+    ...options,
+  }).format(number);
+
+  return fm.replace(/[A-Z]/g, (match) => match.toLowerCase());
+}
+
+// ----------------------------------------------------------------------
+
+export function fData(inputValue) {
+  const number = processInput(inputValue);
+  if (number === null || number === 0) return '0 bytes';
+
+  const units = ['bytes', 'Kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb', 'Zb', 'Yb'];
+  const decimal = 2;
+  const baseValue = 1024;
+
+  const index = Math.floor(Math.log(number) / Math.log(baseValue));
+  const fm = `${parseFloat((number / baseValue ** index).toFixed(decimal))} ${units[index]}`;
+
+  return fm;
+}

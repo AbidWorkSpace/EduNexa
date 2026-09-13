@@ -1,0 +1,263 @@
+import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
+
+import { DEFAULT_SORTING, DEFAULT_FILTERING, DEFAULT_SELECTION, DEFAULT_PAGINATION } from './table-defaults';
+import {
+  getSafePage,
+  normalizeSorting,
+  getValidPageSize,
+  normalizeFiltering,
+  normalizeSelection,
+  normalizePagination,
+} from './table-utils';
+
+// ----------------------------------------------------------------------
+// Custom Hook for CustomTable State Management
+// ----------------------------------------------------------------------
+
+/**
+ * Custom hook for managing CustomTable internal state
+ * For server-side pagination, pass pagination.page (0-based) to keep table in sync when list resets page (e.g. on filter change).
+ * @param {object} props - Component props
+ * @returns {object} - State and handlers
+ */
+export function useCustomTable({
+  rows = [],
+  pagination: paginationProp,
+  sorting: sortingProp,
+  filtering: filteringProp,
+  selection: selectionProp,
+  getRowId,
+  onSelectionChange: onSelectionChangeProp,
+  onPageChange: onPageChangeProp,
+  onPageSizeChange: onPageSizeChangeProp,
+  onSortModelChange: onSortModelChangeProp,
+  onFilterModelChange: onFilterModelChangeProp,
+}) {
+  // Normalize configurations
+  const paginationConfig = useMemo(
+    () => normalizePagination(paginationProp ?? DEFAULT_PAGINATION),
+    [paginationProp]
+  );
+
+  const sortingConfig = useMemo(() => normalizeSorting(sortingProp ?? DEFAULT_SORTING), [sortingProp]);
+
+  const filteringConfig = useMemo(
+    () => normalizeFiltering(filteringProp ?? DEFAULT_FILTERING),
+    [filteringProp]
+  );
+
+  const selectionConfig = useMemo(
+    () => normalizeSelection(selectionProp ?? DEFAULT_SELECTION),
+    [selectionProp]
+  );
+
+  const isServerPaginationWithControlledPage =
+    paginationConfig.mode === 'server' && paginationConfig.page !== undefined && paginationConfig.page !== null;
+
+  const initialPage = isServerPaginationWithControlledPage
+    ? Math.max(0, Number(paginationConfig.page))
+    : 0;
+
+  const [paginationModel, setPaginationModel] = useState(() => {
+    const initialPageSize = paginationConfig.pageSize || DEFAULT_PAGINATION.pageSize;
+    return {
+      page: initialPage,
+      pageSize: initialPageSize,
+    };
+  });
+
+  const paginationModelRef = useRef(paginationModel);
+
+  useEffect(() => {
+    paginationModelRef.current = paginationModel;
+  }, [paginationModel]);
+
+  useEffect(() => {
+    if (!isServerPaginationWithControlledPage) return;
+    const controlledPage = Math.max(0, Number(paginationConfig.page));
+    setPaginationModel((prev) => (prev.page === controlledPage ? prev : { ...prev, page: controlledPage }));
+  }, [isServerPaginationWithControlledPage, paginationConfig.page]);
+
+  // Sorting state
+  const [sortModel, setSortModel] = useState(sortingConfig.sortModel || []);
+
+  // Filtering state - DataGrid requires filterModel to have items array
+  const [filterModel, setFilterModel] = useState(() => {
+    if (filteringConfig.filterModel && filteringConfig.filterModel.items) {
+      return filteringConfig.filterModel;
+    }
+    return { items: [] };
+  });
+
+  // Selection state - Always ensure it's an array
+  const [selectionModel, setSelectionModel] = useState(() => Array.isArray(selectionConfig.selectionModel) ? selectionConfig.selectionModel : []);
+
+  // Calculate total rows for pagination
+  const totalRows = useMemo(() => {
+    if (paginationConfig.mode === 'server' && paginationConfig.rowCount !== undefined) {
+      return paginationConfig.rowCount;
+    }
+    return rows.length;
+  }, [paginationConfig.mode, paginationConfig.rowCount, rows.length]);
+
+  // Single source for page callbacks: prop (from CustomTable wiring) or config, to avoid double-call and ensure view handler runs
+  const onPageChange = onPageChangeProp ?? paginationConfig.onPageChange;
+  const onPageSizeChange = onPageSizeChangeProp ?? paginationConfig.onPageSizeChange;
+
+  // Handle pagination change with edge case handling
+  const handlePaginationModelChange = useCallback(
+    (newModel) => {
+      const prevModel = paginationModelRef.current;
+
+      // For server-side pagination, don't validate page bounds
+      if (paginationConfig.mode === 'server') {
+        const validPageSize = getValidPageSize(
+          newModel.pageSize,
+          paginationConfig.pageSizeOptions,
+          DEFAULT_PAGINATION.pageSize
+        );
+
+        const safeModel = {
+          page: Math.max(0, newModel.page),
+          pageSize: validPageSize,
+        };
+
+        paginationModelRef.current = safeModel;
+        setPaginationModel(safeModel);
+
+        if (onPageChange && safeModel.page !== prevModel.page) {
+          onPageChange(safeModel.page);
+        }
+        if (onPageSizeChange && safeModel.pageSize !== prevModel.pageSize) {
+          onPageSizeChange(safeModel.pageSize);
+        }
+      } else {
+        // Client-side pagination: validate page bounds
+        const safePage = getSafePage(newModel.page, totalRows, newModel.pageSize);
+        const validPageSize = getValidPageSize(
+          newModel.pageSize,
+          paginationConfig.pageSizeOptions,
+          DEFAULT_PAGINATION.pageSize
+        );
+
+        const safeModel = {
+          page: safePage,
+          pageSize: validPageSize,
+        };
+
+        paginationModelRef.current = safeModel;
+        setPaginationModel(safeModel);
+
+        if (onPageChange && safeModel.page !== prevModel.page) {
+          onPageChange(safeModel.page);
+        }
+        if (onPageSizeChange && safeModel.pageSize !== prevModel.pageSize) {
+          onPageSizeChange(safeModel.pageSize);
+        }
+      }
+    },
+    [
+      totalRows,
+      paginationConfig,
+      onPageChange,
+      onPageSizeChange,
+    ]
+  );
+
+  // Handle sort model change
+  const handleSortModelChange = useCallback(
+    (newModel) => {
+      setSortModel(newModel);
+
+      if (onSortModelChangeProp) {
+        onSortModelChangeProp(newModel);
+      }
+
+      if (sortingConfig.onSortModelChange) {
+        sortingConfig.onSortModelChange(newModel);
+      }
+    },
+    [sortingConfig, onSortModelChangeProp]
+  );
+
+  // Handle filter model change
+  const handleFilterModelChange = useCallback(
+    (newModel) => {
+      setFilterModel(newModel);
+
+      if (onFilterModelChangeProp) {
+        onFilterModelChangeProp(newModel);
+      }
+
+      if (filteringConfig.onFilterModelChange) {
+        filteringConfig.onFilterModelChange(newModel);
+      }
+    },
+    [filteringConfig, onFilterModelChangeProp]
+  );
+
+  // Handle selection change
+  const handleSelectionModelChange = useCallback(
+    (newModel) => {
+      setSelectionModel(newModel);
+
+      if (onSelectionChangeProp) {
+        onSelectionChangeProp(newModel);
+      }
+
+      if (selectionConfig.onSelectionChange) {
+        selectionConfig.onSelectionChange(newModel);
+      }
+    },
+    [selectionConfig, onSelectionChangeProp]
+  );
+
+  // Sync controlled props
+  useMemo(() => {
+    if (sortingConfig.sortModel !== undefined) {
+      setSortModel(sortingConfig.sortModel);
+    }
+  }, [sortingConfig.sortModel]);
+
+  useMemo(() => {
+    if (filteringConfig.filterModel !== undefined) {
+      // Ensure filterModel has the correct structure
+      const newFilterModel = filteringConfig.filterModel?.items
+        ? filteringConfig.filterModel
+        : { items: [] };
+      setFilterModel(newFilterModel);
+    }
+  }, [filteringConfig.filterModel]);
+
+  useMemo(() => {
+    if (selectionConfig.selectionModel !== undefined) {
+      // Ensure selectionModel is always an array
+      const newSelectionModel = Array.isArray(selectionConfig.selectionModel)
+        ? selectionConfig.selectionModel
+        : [];
+      setSelectionModel(newSelectionModel);
+    }
+  }, [selectionConfig.selectionModel]);
+
+  return {
+    // Configurations
+    paginationConfig,
+    sortingConfig,
+    filteringConfig,
+    selectionConfig,
+
+    // State
+    paginationModel,
+    sortModel,
+    filterModel,
+    selectionModel,
+    totalRows,
+
+    // Handlers
+    handlePaginationModelChange,
+    handleSortModelChange,
+    handleFilterModelChange,
+    handleSelectionModelChange,
+  };
+}
+

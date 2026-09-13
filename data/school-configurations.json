@@ -1,0 +1,112 @@
+[
+  {
+    "schoolId": "sch_abc",
+    "branding": {
+      "schoolName": "ABC School",
+      "tagline": "Building bright futures",
+      "logoUrl": "",
+      "faviconUrl": null
+    },
+    "theme": {
+      "defaultMode": "light",
+      "light": {
+        "colors": {
+          "primary": "#1565C0",
+          "secondary": "#00838F",
+          "accent": "#0D47A1",
+          "success": "#22C55E",
+          "warning": "#FFAB00",
+          "error": "#FF5630",
+          "info": "#00B8D9",
+          "background": "#FFFFFF",
+          "surface": "#FFFFFF",
+          "textPrimary": "#1C252E",
+          "textSecondary": "#637381",
+          "textMuted": "#919EAB",
+          "border": "#DFE3E8"
+        }
+      },
+      "dark": {
+        "colors": {
+          "primary": "#73A3D9",
+          "secondary": "#4DB6C4",
+          "accent": "#90CAF9",
+          "success": "#22C55E",
+          "warning": "#FFAB00",
+          "error": "#FF5630",
+          "info": "#00B8D9",
+          "background": "#141A21",
+          "surface": "#1C252E",
+          "textPrimary": "#FFFFFF",
+          "textSecondary": "#919EAB",
+          "textMuted": "#637381",
+          "border": "#454F5B"
+        }
+      }
+    },
+    "typography": {
+      "fontFamily": "Poppins",
+      "variants": {}
+    },
+    "spacing": 8,
+    "radius": 20,
+    "shadow": "md",
+    "componentDefaults": {},
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "schoolId": "sch_greenvalley",
+    "branding": {
+      "schoolName": "Green Valley Academy",
+      "tagline": "Grow, learn, thrive",
+      "logoUrl": "",
+      "faviconUrl": null
+    },
+    "theme": {
+      "defaultMode": "dark",
+      "light": {
+        "colors": {
+          "primary": "#2E7D32",
+          "secondary": "#9E9E9E",
+          "accent": "#1B5E20",
+          "success": "#22C55E",
+          "warning": "#FFAB00",
+          "error": "#FF5630",
+          "info": "#00B8D9",
+          "background": "#FFFFFF",
+          "surface": "#FFFFFF",
+          "textPrimary": "#1C252E",
+          "textSecondary": "#637381",
+          "textMuted": "#919EAB",
+          "border": "#DFE3E8"
+        }
+      },
+      "dark": {
+        "colors": {
+          "primary": "#66BB6A",
+          "secondary": "#BDBDBD",
+          "accent": "#81C784",
+          "success": "#22C55E",
+          "warning": "#FFAB00",
+          "error": "#FF5630",
+          "info": "#00B8D9",
+          "background": "#101712",
+          "surface": "#182119",
+          "textPrimary": "#FFFFFF",
+          "textSecondary": "#A8B5AA",
+          "textMuted": "#6E7A70",
+          "border": "#2C3A2E"
+        }
+      }
+    },
+    "typography": {
+      "fontFamily": "Inter Variable",
+      "variants": {}
+    },
+    "spacing": 8,
+    "radius": 2,
+    "shadow": "sm",
+    "componentDefaults": {},
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  }
+]

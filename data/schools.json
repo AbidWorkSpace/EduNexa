@@ -1,0 +1,26 @@
+[
+  {
+    "id": "sch_abc",
+    "name": "ABC School",
+    "slug": "abc-school",
+    "logoUrl": null,
+    "faviconUrl": null,
+    "status": "active",
+    "contactEmail": "office@abcschool.edu",
+    "contactPhone": null,
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "sch_greenvalley",
+    "name": "Green Valley Academy",
+    "slug": "green-valley-academy",
+    "logoUrl": null,
+    "faviconUrl": null,
+    "status": "active",
+    "contactEmail": "office@greenvalley.edu",
+    "contactPhone": null,
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  }
+]
