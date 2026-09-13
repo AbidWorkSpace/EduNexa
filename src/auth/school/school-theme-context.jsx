@@ -12,9 +12,14 @@ import { use, createContext } from 'react';
 export const DEFAULT_SCHOOL_THEME_CONTEXT = {
   school: null,
   configuration: null,
-  primaryColor: null,
-  secondaryColor: null,
+  lightColors: null,
+  darkColors: null,
+  defaultMode: null,
   fontFamily: null,
+  typographyVariants: null,
+  spacing: null,
+  radius: null,
+  shadow: null,
   isLoading: false,
 };
 

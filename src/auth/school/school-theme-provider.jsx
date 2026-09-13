@@ -16,11 +16,12 @@ import { SchoolThemeContext, DEFAULT_SCHOOL_THEME_CONTEXT } from './school-theme
 // SettingsProvider) so it's inert on public pages and only starts fetching
 // once a user with a schoolId is authenticated.
 //
-// The fetched primary/secondary color and font family are exposed via
-// context for ThemeProvider to merge into its settingsState — deliberately
-// NOT written into SettingsProvider's own (persisted, unscoped) state, so a
-// tenant's brand never ends up cached under the single global 'app-settings'
-// cookie/localStorage key. See src/theme/theme-provider.jsx.
+// The fetched design tokens (light/dark colors, typography, spacing, radius,
+// shadow) are exposed via context for ThemeProvider to merge into its
+// settingsState — deliberately NOT written into SettingsProvider's own
+// (persisted, unscoped) state, so a tenant's brand never ends up cached
+// under the single global 'app-settings' cookie/localStorage key.
+// See src/theme/theme-provider.jsx.
 // ----------------------------------------------------------------------
 
 export function SchoolThemeProvider({ children }) {
@@ -60,9 +61,14 @@ export function SchoolThemeProvider({ children }) {
     return {
       school,
       configuration,
-      primaryColor: configuration.theme?.primaryColor ?? null,
-      secondaryColor: configuration.theme?.secondaryColor ?? null,
+      lightColors: configuration.theme?.light?.colors ?? null,
+      darkColors: configuration.theme?.dark?.colors ?? null,
+      defaultMode: configuration.theme?.defaultMode ?? null,
       fontFamily: configuration.typography?.fontFamily ?? null,
+      typographyVariants: configuration.typography?.variants ?? null,
+      spacing: configuration.spacing ?? null,
+      radius: configuration.radius ?? null,
+      shadow: configuration.shadow ?? null,
       isLoading: false,
     };
   }, [authenticated, schoolId, data, isLoading, isFetching]);

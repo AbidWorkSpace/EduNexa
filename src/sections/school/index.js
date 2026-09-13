@@ -1,1 +1,1 @@
-export * from './school-settings-view';
+export * from './theme-builder/school-theme-builder-view';

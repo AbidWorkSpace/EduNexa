@@ -4,10 +4,10 @@ import { CONFIG } from 'src/global-config';
 
 // ----------------------------------------------------------------------
 
-const SchoolSettingsView = createLazyView(() => import('src/sections/school'), 'SchoolSettingsView');
+const SchoolThemeBuilderView = createLazyView(() => import('src/sections/school'), 'SchoolThemeBuilderView');
 
-export const metadata = { title: `School branding | Dashboard - ${CONFIG.appName}` };
+export const metadata = { title: `Theme Builder | Dashboard - ${CONFIG.appName}` };
 
 export default function Page() {
-  return <SchoolSettingsView />;
+  return <SchoolThemeBuilderView />;
 }

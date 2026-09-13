@@ -19,13 +19,19 @@ export function ThemeProvider({ themeOverrides, children, ...other }) {
   const schoolTheme = useSchoolThemeContext();
 
   // The authenticated user's school configuration (once loaded) overrides
-  // brand color/font on top of the user's own personal settings — never
-  // persisted into settings' own storage, see SchoolThemeProvider.
+  // brand color/typography/spacing/radius/shadow on top of the user's own
+  // personal settings — never persisted into settings' own storage, see
+  // SchoolThemeProvider (this is what keeps School A's tokens from ever
+  // leaking into School B's session on a shared browser).
   const settingsState = {
     ...settings.state,
-    ...(schoolTheme.primaryColor && { primaryColor: schoolTheme.primaryColor }),
-    ...(schoolTheme.secondaryColor && { secondaryColor: schoolTheme.secondaryColor }),
     ...(schoolTheme.fontFamily && { fontFamily: schoolTheme.fontFamily }),
+    ...(schoolTheme.lightColors && { lightColors: schoolTheme.lightColors }),
+    ...(schoolTheme.darkColors && { darkColors: schoolTheme.darkColors }),
+    ...(schoolTheme.spacing != null && { spacingUnit: schoolTheme.spacing }),
+    ...(schoolTheme.radius != null && { radiusBase: schoolTheme.radius }),
+    ...(schoolTheme.shadow && { shadowLevel: schoolTheme.shadow }),
+    ...(schoolTheme.typographyVariants && { typographyVariants: schoolTheme.typographyVariants }),
   };
 
   const theme = createTheme({

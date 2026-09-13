@@ -51,7 +51,7 @@ export const navData = [
     subheader: 'Platform',
     items: [
       {
-        title: 'School branding',
+        title: 'Theme Builder',
         path: paths.dashboard.schoolSettings,
         icon: ICONS.school,
       },
